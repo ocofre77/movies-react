@@ -3,14 +3,16 @@ import { useParams } from "react-router-dom";
 import styles from "./MovieDetails.module.css";
 import { useEffect, useState } from "react";
 import { get } from "../utils/httpClient";
+import { Spinner } from "../components/Spinner";
 
 export function MovieDetails(){
 
     const { movieId } = useParams();
-    const { isLoading, setIsLoading } = useState(true); 
+    const [ isLoading, setIsLoading ] = useState(true); 
     const [movie, setMovie] =useState(null);
 
     useEffect(()=>{
+        setIsLoading(true);
         get("/movie/" + movieId).then((data)=>{
             setIsLoading(false);
             setMovie(data);
@@ -18,7 +20,7 @@ export function MovieDetails(){
     },[movieId]);
 
     if(isLoading){
-        return <div>Loading...</div>;
+        return <Spinner/>;
     }
 
     if(!movie){
@@ -39,6 +41,15 @@ export function MovieDetails(){
                 { movie.genres.map(genre => genre.name).join(", ") }</p>
             <p>
                 <strong>Description:</strong> { movie.overview}
+            </p>
+
+            <p>
+                <strong>Production Companies:</strong> { " " }
+                { movie.production_companies.map(company => company.name).join(", ") }
+            </p>
+
+            <p> <strong>Trilers</strong> 
+                <li>Youtube</li>
             </p>
         </div>
     </div>);
